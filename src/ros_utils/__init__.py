@@ -1,7 +1,7 @@
 """Utility methods for working with ROS data."""
 from .camera_info_msg import camera_info_msg
 from .get_camera_dimensions import get_camera_dimensions
-from .get_camera_image import get_camera_image
+from .get_camera_image import get_camera_image, get_camera_image_compressed
 from .get_depth_image import get_depth_image
 from .image_compressed_msg import image_compressed_msg
 from .image_msg import image_msg

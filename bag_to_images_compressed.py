@@ -2,11 +2,22 @@
 import argparse
 from rosbag import Bag
 from tqdm import tqdm
-from src.ros_utils import get_camera_image
+from src.ros_utils import get_camera_image_compressed
 from src.window import Window
 from PIL import Image
 import os.path as osp
 import os
+import io
+import numpy as np
+
+def compressed_imgmsg_to_pil(compressed_img_msg):
+    # Convert the compressed image data to a byte stream
+    byte_stream = io.BytesIO(compressed_img_msg.data)
+    # Open the image using PIL
+    pil_image = Image.open(byte_stream)
+    # Convert to RGB if needed
+    pil_image = pil_image.convert('RGB')
+    return pil_image
 
 def extract_images(bag_file: Bag, topics: list, output: str, format:str) -> None:
     """
@@ -20,6 +31,7 @@ def extract_images(bag_file: Bag, topics: list, output: str, format:str) -> None
         None
 
     """
+    
     # create path
     if not osp.isdir(output):
         # create the output directory
@@ -45,21 +57,18 @@ def extract_images(bag_file: Bag, topics: list, output: str, format:str) -> None
             # update the progress with a post fix
             progress.set_postfix(time=time)
             # if the camera window isn't open, open it5
-            if windows[topic] is None:
-                title = '{} ({})'.format(bag_file.filename, topic)
-                # get the camera image dimensions
-                msg.width = msg.width
-                msg.height = msg.height
-                windows[topic] = Window(title, msg.height, msg.width)
-            # get the pixels of the camera image and display them
-            
-            img = get_camera_image(msg.data, windows[topic].shape)
-            if msg.encoding == 'bgr8':
-                img = img[..., ::-1]
-            windows[topic].show(img[..., :3])
-            # save the image
-            img = Image.fromarray(img)
-                
+            try:
+                img = compressed_imgmsg_to_pil(msg)
+                if windows[topic] is None:
+                    title = '{} ({})'.format(bag_file.filename, topic)
+                    width, height = img.size
+                    windows[topic] = Window(title, height, width)
+            except Exception as e:
+                print(f"Error converting image: {e}")
+                continue
+        
+            windows[topic].show(np.array(img))
+                            
             if format == "tum":
                 time = "%.6f" % time.to_sec()
                 path = osp.join(output_path, f"{time}.png")
