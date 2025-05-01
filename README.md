@@ -16,3 +16,5 @@ following scripts.
 | `semantic_segment.py` | produce samples from a semantic segmentation model and an image topic
 | `shift.py`            | shift a topic in by an offset in seconds
 | `video_to_bag.py`     | convert a video file to a ROS bag
+| `bag_to_images.py`     | convert a bag file to images (with Image topic)
+| `bag_to_images_compressed.py` | convert a bag file to images (with CompressedImage topic)
