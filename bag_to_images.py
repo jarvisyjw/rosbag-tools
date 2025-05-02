@@ -48,8 +48,6 @@ def extract_images(bag_file: Bag, topics: list, output: str, format:str) -> None
             if windows[topic] is None:
                 title = '{} ({})'.format(bag_file.filename, topic)
                 # get the camera image dimensions
-                msg.width = msg.width
-                msg.height = msg.height
                 windows[topic] = Window(title, msg.height, msg.width)
             # get the pixels of the camera image and display them
             

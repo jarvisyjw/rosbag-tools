@@ -18,3 +18,4 @@ following scripts.
 | `video_to_bag.py`     | convert a video file to a ROS bag
 | `bag_to_images.py`     | convert a bag file to images (with Image topic)
 | `bag_to_images_compressed.py` | convert a bag file to images (with CompressedImage topic)
+| `bag_to_vslam.py` | convert a bag file to [vslamlab](https://github.com/alejandrofontan/VSLAM-LAB)'s format

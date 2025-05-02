@@ -1,3 +1,5 @@
+"""A script to extract images from a ROS .bag file and convert them to VSLAM-LAB format."""
+
 # Using this file as follows:
 # python bag_to_vslam.py \
 #   --bag_file data/my_record.bag \
@@ -49,12 +51,30 @@ def extract_images_for_vslamlab(bag_file: Bag, topic: str, output_dir: str, sequ
     print(f"[Done] Saved {idx+1} images and rgb.txt to {sequence_dir}")
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Convert ROS .bag to VSLAM-LAB dataset format")
-    parser.add_argument('--bag_file', '-b', type=str, required=True, help="Path to .bag file")
-    parser.add_argument('--topic', '-t', type=str, required=True, help="Image topic (e.g. /camera/image/compressed)")
-    parser.add_argument('--output_dir', '-o', type=str, required=True, help="Output directory for VSLAM-LAB format")
-    parser.add_argument('--sequence_name', '-s', type=str, default='sequence_01', help="Name of the output sequence folder")
-    args = parser.parse_args()
+    PARSER = argparse.ArgumentParser(description="Convert ROS .bag to VSLAM-LAB dataset format")
+    
+    PARSER.add_argument('--bag_file', '-b', 
+                        type=str, 
+                        required=True, 
+                        help="Path to .bag file")
+    PARSER.add_argument('--topic', '-t', 
+                        type=str, 
+                        required=True, 
+                        help="Image topic (e.g. /camera/image/compressed)")
+    PARSER.add_argument('--output_dir', '-o', 
+                        type=str, 
+                        required=True, 
+                        help="Output directory for VSLAM-LAB format")
+    PARSER.add_argument('--sequence_name', '-s', 
+                        type=str, 
+                        default='sequence_01', 
+                        help="Name of the output sequence folder")
+    try: 
+        ARGS = PARSER.parse_args()
+        with Bag(ARGS.bag_file, 'r') as bag:
+            extract_images_for_vslamlab(bag, ARGS.topic, ARGS.output_dir, ARGS.sequence_name)
+    
+    except KeyboardInterrupt:
+        pass
 
-    with Bag(args.bag_file, 'r') as bag:
-        extract_images_for_vslamlab(bag, args.topic, args.output_dir, args.sequence_name)
+__all__ = [extract_images_for_vslamlab.__name__]
